@@ -1,0 +1,58 @@
+\begin{thebibliography}{8}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Brock et~al.(2007)Brock, Pihur, Datta, and Datta]{Bro07}
+G.~N. Brock, V.~Pihur, S.~Datta, and S.~Datta.
+\newblock clvalid, an r package for cluster validation.
+\newblock \emph{Journal of Statistical Software}, 25:\penalty0 4, 2007.
+
+\bibitem[De~Boer et~al.(2005)De~Boer, Kroese, Mannor, and Rubinstein]{Deb05}
+P.~De~Boer, D.~Kroese, S.~Mannor, and R.~Rubinstein.
+\newblock A tutorial on the cross-entropy method.
+\newblock \emph{Ann. Oper. Res.}, 134:\penalty0 19–67, 2005.
+
+\bibitem[DeConde et~al.(2006)DeConde, Hawley, Falcon, Clegg, Knudsen, and
+  Etzioni]{Dec06}
+R.~DeConde, S.~Hawley, S.~Falcon, N.~Clegg, B.~Knudsen, and R.~Etzioni.
+\newblock Combining results of microarray experiments: a rank aggregation
+  approach.
+\newblock \emph{Stat Appl Genet Mol Biol}, 5\penalty0 (1):\penalty0 Article15,
+  2006.
+
+\bibitem[Goldenberg(1989)]{Gol89}
+D.~E. Goldenberg.
+\newblock \emph{Genetic Algorithms in Search, Optimization and Machine
+  Learning}.
+\newblock Addison Wesley, Reading: MA, 1989.
+
+\bibitem[Lin et~al.(2006)Lin, Ding, and Zhou]{Lin06}
+S.~Lin, J.~Ding, and J.~Zhou.
+\newblock Rank aggregation of putative microrna targets with cross-entropy
+  monte carlo methods.
+\newblock \penalty0 (Preprint, presented at the IBC 2006 conference, Montral),
+  2006.
+
+\bibitem[Pihur et~al.(2007)Pihur, Datta, and Datta]{Pih07}
+V.~Pihur, S.~Datta, and S.~Datta.
+\newblock Weighted rank aggregation of cluster validation measures: a monte
+  carlo cross-entropy approach.
+\newblock \emph{Bioinformatics}, 23\penalty0 (13):\penalty0 1607--15, 2007.
+
+\bibitem[Pihur et~al.(2008)Pihur, Datta, and Datta]{Pih08}
+V.~Pihur, S.~Datta, and S.~Datta.
+\newblock Finding cancer genes through meta-analysis of microarray experiments:
+  Rank aggregation via the cross entropy algorithm.
+\newblock \emph{Genomics}, \penalty0 (to appear), 2008.
+
+\bibitem[Rubinstein(1999)]{Rub99}
+R.~Rubinstein.
+\newblock The cross-entropy method for combinatorial and continuous
+  optimization.
+\newblock \emph{Methodology and Computing in Applied Probability}, 1:\penalty0
+  127--190, 1999.
+
+\end{thebibliography}

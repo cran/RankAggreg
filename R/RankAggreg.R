@@ -1,48 +1,59 @@
 `RankAggreg` <-
-function(x, k, index.weights=NULL, use.weights=FALSE, method=c("CrossEntropy", "GeneticAlgorithm"), distance=c("Spearman", "Kendall"), 
-            rho=.01, weight=.5, N=5*k*length(unique(sort(as.vector(x)))), error = .001, maxIter = 100,
-            popSize=100, CP=1, MP=.001, informative=FALSE, v1=NULL, verbose=TRUE)
+function(x, k, weights=NULL, method=c("CE", "GA"), 
+		distance=c("Spearman", "Kendall"), seed=NULL, maxIter = 1000, 
+		convIn=ifelse(method=="CE", 7, 30), importance=rep(1,nrow(x)),
+            rho=.1, weight=.25, N=10*k*length(unique(sort(as.vector(x)))), v1=NULL,
+            popSize=100, CP=.4, MP=.01, verbose=TRUE, ...)
 {
-   
-    method <- match.arg(method, c("CrossEntropy", "GeneticAlgorithm"))
+    if(!is.null(seed))    
+    	  set.seed(seed)	   
+    method <- match.arg(method, c("CE", "GA"))
     distance <- match.arg(distance, c("Spearman", "Kendall"))
+    argss <- list(...)
     x <- x[,1:k]
+    orig.x <- x
+
+    orig.imp <- importance
+    importance <- importance/sum(importance) #rescale importance weights
+	
     distinct <- apply(x, 1, function(y) ifelse(length(unique(y)) < k, 1, 0))
-    if (sum(distinct) >= 1)
+    if(sum(distinct) >= 1)
         stop("Elements of Each Row Must Be Unique")
-    if (nrow(x)<2)
-        stop("X must have more than 1 row") 
+    if(nrow(x)<2)
+        stop("X must have more than 1 row")
+    if(CP == 0 | MP == 0)
+	  stop("Neither CP nor MP can be 0") 
 
     compr.list <- unique(sort(as.vector(x)))
     n <- length(compr.list)
     
-    if(method=="CrossEntropy"){
+    if(method=="CE"){
         comp.list <- 1:n
         x <- t(apply(x,1, function(xx) match(xx,compr.list)))}
 
-    if(use.weights){
-        index.weights <- index.weights[,1:k]
+    if(!is.null(weights)){
+        weights <- weights[,1:k]
         #standardize weights:
-        index.weights <- t(apply(index.weights,1,function(z) (z-min(z))/(max(z)-min(z))))
-        if(index.weights[1,k]!=0)
-            index.weights <- 1-index.weights
-        if(dim(x)[1] != dim(index.weights)[1] || dim(x)[2] != dim(index.weights)[2])
+        weights <- t(apply(weights,1,function(z) (z-min(z))/(max(z)-min(z))))
+	  for(i in 1:nrow(weights)) # make sure 1 is the best score for all lists
+        	if(weights[i,k]!=0)
+            	weights[i,] <- 1-weights[i,]
+        if(dim(x)[1] != dim(weights)[1] || dim(x)[2] != dim(weights)[2])
         stop("Dimensions of x and weight matrices have to be the same")
     }
 
     if (k > n)
         stop("k must be smaller or equal to n") 
-
+    
+    fyRes <- matrix(0,1,2)
+    colnames(fyRes) <- c("Minimums", "Medians")	
    
-    if(method=="CrossEntropy"){
-        v <- array(dim=c(n,k,maxIter))
-        if(informative)
-            v[,,1] <- as.matrix(v1)
-        else
-            v[,,1] <- 1/(n)
+    if(method=="CE"){
+        v <- matrix(1/n,n,k)
+        if(!is.null(v1))
+            v <- as.matrix(v1)
         y <- vector("numeric")
-        diff <- vector("numeric")
-
+    
         Nhat <- round(rho*N)
         if (Nhat < 5)
             stop("rho is too small")
@@ -50,55 +61,48 @@ function(x, k, index.weights=NULL, use.weights=FALSE, method=c("CrossEntropy", "
         t <- 1
         repeat
         {
-            cands <- mcmcProc(v[,,t], N, comp.list=comp.list)
+            cands <- mcmcProc(v, N, argss$thin, argss$burn.in, comp.list, verbose)
             
-            if(verbose)
-                if(distance=="Spearman")
-                    cat(" Calculating Spearman scores... \n")
-                else
-                    cat(" Calculating Kendall scores... \n")
-                    
-            if(use.weights)
-                if(distance=="Spearman")
-                    f.y <- spearman(x, cands, index.weights, weighted=TRUE)
-                else
-                    f.y <- kendall(x, cands, index.weights, weighted=TRUE)
+		minf <- ifelse(t!=1, min(f.y), 0)
+		        
+            if(distance=="Spearman")
+                f.y <- spearman(x, cands, importance, weights)
             else
-                if(distance=="Spearman")
-                    f.y <- spearman(x, cands, weighted=FALSE)
-                else
-                    f.y <- kendall(x, cands, weighted=FALSE)
-                    
-            if(verbose)
-                cat("Iteration", t, "Done! ")
+                f.y <- kendall(x, cands, importance, weights)
 
             fy <- sort(f.y, ind=TRUE)
             y[t] <- fy$x[Nhat]
             good.cand <- cands[f.y <= y[t],]
             
+		if(t==1)
+			fyRes[1,] <- c(min(f.y), median(f.y))
+		else
+			fyRes <- rbind(fyRes,c(min(f.y), median(f.y)))
             
-            v[,,t+1] <- upd.prob(good.cand, v[,,t], weight, comp.list)
+            v <- upd.prob(good.cand, v, weight, comp.list)
             
             best.cand <- compr.list[cands[fy$ix[1],]]
             rm(cands) # clean up
             
             y.l <- paste(best.cand, sep="", collapse=",")
-
-            diff[t] <- sum(abs(v[,,t+1]-v[,,t]))/(n*k)
             
-            if(verbose)     
-                cat("\n",    c("Optimal value: ", y[t],
-                        "\n Optimal List:  ",y.l, 
-                       " \n Prob. Diff:    ",  diff[t]), 
-                      ifelse(diff[t] < error,"<",">"), error, "\n\n")   
+            if(verbose){     
+                cat("\n", "Iteration", t, ": ",  c("Optimal value: ", min(f.y),
+                        "\n Optimal List:  ", y.l, "\n"))  
+		    plotUpdate(f.y, fyRes, N, method)}	
 
-            if(diff[t] < error)          
-                break 
+            if(minf == min(f.y))
+                iter <- iter+1
+            else
+                iter <- 1
+            
+            if(iter == convIn)
+                break
 
             t <- t + 1
-            if (t > 200){
-            cat("Did not converge after 200 iterations. Please increase sample size N")
-            break}
+            if (t > maxIter){
+            	cat("Did not converge after ", maxIter, " iterations. Please increase sample size N\n")
+			break}
         }
     } else{
         #generate initial population randomly
@@ -107,17 +111,12 @@ function(x, k, index.weights=NULL, use.weights=FALSE, method=c("CrossEntropy", "
             cands[i,] <- sample(compr.list, k)
             
         #calculate obj. fn
-        if(use.weights)
             if(distance=="Spearman")
-                f.y <- spearman(x, cands, index.weights, weighted=TRUE)
+                f.y <- spearman(x, cands, importance, weights)
             else
-                f.y <- kendall(x, cands, index.weights, weighted=TRUE)
-        else
-            if(distance=="Spearman")
-                f.y <- spearman(x, cands, weighted=FALSE)
-            else
-                f.y <- kendall(x, cands, weighted=FALSE)
+                f.y <- kendall(x, cands, importance, weights)
         
+	  fyRes[1,] <- c(min(f.y), median(f.y))	
         best.cand <- cands[which.min(f.y),]
         bestevery <- min(f.y)    
         
@@ -141,8 +140,9 @@ function(x, k, index.weights=NULL, use.weights=FALSE, method=c("CrossEntropy", "
             pairstocross <- floor(popSize*CP/2)
             samp <- sample(1:popSize, pairstocross*2)
             pointsofcross <- sample(2:k, pairstocross, replace=TRUE)
-            for(i in 1:pairstocross){ 
-                for(j in pointsofcross[i]:k){
+            for(i in 1:pairstocross){
+		    swap <- ifelse(pointsofcross[i] < k/2, 1:pointsofcross[i], pointsofcross[i]:k)
+                for(j in swap){
                 # this loop performs partially matched crossover (PMX) described in Section 10.5 of 
                 # Data Mining: Concepts, Models, Methods, and Algorithms by Mehmed Kantardzic (2003)
 
@@ -161,36 +161,38 @@ function(x, k, index.weights=NULL, use.weights=FALSE, method=c("CrossEntropy", "
                           
             # random mutations with probability MP
             mutations <- round(popSize*k*MP)
+		
             rows <- sample(1:popSize, mutations, replace=TRUE)
             cols <- sample(1:k, mutations, replace=TRUE)
-            for(i in 1:mutations)
-                if(length(temp <- setdiff(compr.list, cands[rows[i],]))!=0)
-                    cands[rows[i], cols[i]] <- sample(temp,1)
-            
+		switchWith <- sample(compr.list, mutations, replace=TRUE)
+
+            for(i in 1:mutations){	
+		    tempI <- cands[rows[i], cols[j]]
+		    if(switchWith[i] %in% cands[rows[i],])
+		        cands[rows[i],which(switchWith[i]==cands[rows[i],])] <- tempI	
+		    cands[rows[i], cols[j]] <- switchWith[i]
+		}         
             
             #calculate obj. fn
-            if(use.weights)
-                if(distance=="Spearman")
-                    f.y <- spearman(x, cands, index.weights, weighted=TRUE)
-                else
-                    f.y <- kendall(x, cands, index.weights, weighted=TRUE)
+            if(distance=="Spearman")
+                f.y <- spearman(x, cands, importance, weights)
             else
-                if(distance=="Spearman")
-                    f.y <- spearman(x, cands, weighted=FALSE)
-                else
-                    f.y <- kendall(x, cands, weighted=FALSE)
-  
+                f.y <- kendall(x, cands, importance, weights)
+
+ 		fyRes <- rbind(fyRes,c(min(f.y), median(f.y)))
+
             y.l <- paste(cands[which.min(f.y),], sep="", collapse=",")
-            if(verbose)     
+            if(verbose){     
                 cat("\n", "Iteration", t, ": ",  c("Optimal value: ", min(f.y),
                         "\n Optimal List:  ", y.l, "\n"))
+		    plotUpdate(f.y, fyRes, popSize, method)}
             
             if(minf == min(f.y))
                 iter <- iter+1
             else
                 iter <- 1
             
-            if(iter == 5 || t >= maxIter)
+            if(iter == convIn)
                 conv=TRUE
             
             if(min(f.y) < bestevery){
@@ -198,9 +200,18 @@ function(x, k, index.weights=NULL, use.weights=FALSE, method=c("CrossEntropy", "
                 bestevery <- min(f.y)
             }
             t <- t+1
+		if(t > maxIter){
+			cat("Did not converge after ", maxIter, " iterations.\n")
+			break}
         }
     }
-    list(top.list=best.cand, optimal.value=ifelse(method=="CrossEntropy", fy$x[1], bestevery), 
-    sample.size = ifelse(method=="CrossEntropy", N, popSize), num.iter=t, method=method, distance=distance)
+    rownames(fyRes) <- paste("Iter", 1:t)
+    res <- list(top.list=best.cand, optimal.value=ifelse(method=="CE", fy$x[1], bestevery), 
+    sample.size = ifelse(method=="CE", N, popSize), num.iter=t, method=method, distance=distance,
+    importance=orig.imp, lists = orig.x, weights = weights, sample=f.y, summary = fyRes)
+    class(res) <- "raggr"
+    res
 }
+
+
 

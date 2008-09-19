@@ -1,11 +1,16 @@
 `mcmcProc` <-
-function(v, N, thin=20, burn.in=round(N*thin/100), comp.list, verbose=TRUE)
+function(v, N, thin, burn.in, comp.list, verbose=TRUE)
 {
+    if(is.null(thin))
+	   thin = 20 # default value for thinning
+    if(is.null(burn.in))
+	   burn.in=N # default value for burn.in
+
     n <- nrow(v)
     k <- ncol(v)
     M <- (N+burn.in)*thin
 
-    samples <- matrix(0,N+burn.in,k)
+    samples <- matrix(0,N,k)
     ind <- 1
     last <- comp.list[sample(1:n,n)]    
     
@@ -32,17 +37,17 @@ function(v, N, thin=20, burn.in=round(N*thin/100), comp.list, verbose=TRUE)
                 (v[last[vert],vert]*v[last[horz],horz])
     
         if (A > unifs[i]){
-            if(i%%thin==0)      
-                samples[i/thin,] <- x[1:k]
+            if(i%%thin==0 && i>=burn.in*thin)      
+                samples[i/thin-burn.in,] <- x[1:k]
             last <- x
         }
         else
-            if(i%%thin==0)
-                samples[i/thin,] <- last[1:k]
+            if(i%%thin==0 && i>=burn.in*thin)
+                samples[i/thin-burn.in,] <- last[1:k]
 
         if(i%%(M/10)==0 && verbose)
             cat(paste(i*100/M, "% ",sep=""))
     }
-    samples[-(1:burn.in),]
+    samples
 }
 

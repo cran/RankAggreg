@@ -1,21 +1,27 @@
 `BruteAggreg` <-
-function(x, k, weighted=FALSE, index.weights=NULL, distance=c("Spearman", "Kendall")){
+function(x, k, weights=NULL, distance=c("Spearman", "Kendall"), importance=rep(1,nrow(x))){
     distance <- match.arg(distance, c("Spearman", "Kendall"))
     x <- x[,1:k]
+    orig.x <- x
+
+    orig.imp <- importance
+    importance <- importance/sum(importance) #rescale importance weights
+
     distinct <- apply(x, 1, function(y) ifelse(length(unique(y)) < k, 1, 0))
     if (sum(distinct) >= 1)
         stop("Elements of Each Row Must Be Unique")
     if (nrow(x)<2)
         stop("X must have more than 1 row") 
     
-    if(weighted){
-        index.weights <- index.weights[,1:k]
+    if(!is.null(weights)){
+        weights <- weights[,1:k]
         #standardize weights:
-        index.weights <- t(apply(index.weights,1,function(z) (z-min(z))/(max(z)-min(z))))
-        if(index.weights[1,k]!=0)
-            index.weights <- 1-index.weights
-        if(dim(x)[1] != dim(index.weights)[1] || dim(x)[2] != dim(index.weights)[2])
-        stop("Dimensions of x and weight matrices have to be the same")
+        weights <- t(apply(weights,1,function(z) (z-min(z))/(max(z)-min(z))))
+	  for(i in 1:nrow(weights))
+        	if(weights[i,k]!=0)
+            	weights[i,] <- 1-weights[i,]
+        if(dim(x)[1] != dim(weights)[1] || dim(x)[2] != dim(weights)[2])
+        	stop("Dimensions of x and weights matrices have to be the same")
     }
 
        
@@ -28,9 +34,14 @@ function(x, k, weighted=FALSE, index.weights=NULL, distance=c("Spearman", "Kenda
     library(gtools)
     perms <- permutations(n,k,comp.list)
     if(distance=="Spearman")
-        f.y <- spearman(x, perms, index.weights, weighted)
+        f.y <- spearman(x, perms, importance, weights)
     else
-        f.y <- kendall(x, perms, index.weights, weighted)
-    list(top.list=perms[which.min(f.y),],fn.score=min(f.y), distance=distance)
+        f.y <- kendall(x, perms, importance, weights)
+    
+    res <- list(top.list=perms[which.min(f.y),],optimal.value=min(f.y), distance=distance,
+		method="BruteForce", importance=orig.imp, lists=orig.x, weights=weights, 
+		sample=f.y, sample.size=length(f.y), summary=matrix(c(min(f.y),median(f.y)),1,2))
+    class(res) <- "raggr"
+    res
 }
 
