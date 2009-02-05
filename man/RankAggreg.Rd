@@ -7,10 +7,10 @@
  weights) via the Cross-Entropy Monte Carlo algorithm or the Genetic Algorithm.
 }
 \usage{
-RankAggreg(x, k, weights=NULL, method=c("CE", "GA"), 
-distance=c("Spearman", "Kendall"), seed=NULL, maxIter = 1000, 
+RankAggreg(x, k, weights=NULL, method=c("CE", "GA"),
+distance=c("Spearman", "Kendall"), seed=NULL, maxIter = 1000,
 convIn=ifelse(method=="CE", 7, 30), importance=rep(1,nrow(x)),
-rho=.1, weight=.25, N=10*k*length(unique(sort(as.vector(x)))), v1=NULL,
+rho=.1, weight=.25, N=10*k^2, v1=NULL,
 popSize=100, CP=.4, MP=.01, verbose=TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -39,11 +39,9 @@ popSize=100, CP=.4, MP=.01, verbose=TRUE, ...)
   \item{MP}{Mutation probability for the GA. This value should be small and the number of mutations in the population of size popSize
 	and the number of features k is computed as popSize*k*MP.}
   \item{verbose}{boolean, if console output is to be displayed at each iteration}
-  \item{\dots}{additional arguments can be passed to the MCMC procedure used by the CE:
+  \item{\dots}{additional arguments can be passed to the internal procedures:
 
-	-- thin - the thinning parameter, i.e. pick every \emph{thin} element from the Markov chain; default: 20,
-
-	-- burn.in - \emph{burn.in*thin} is the number of elements in the chain with length \emph{(N+burn.in)*thin} to be discarded; default: N (half of the chain)}
+	-- p - penalty for the Kendall's tau distance; default: 0}
 }
 \details{
   The function performs rank aggregation via the Cross-Entropy Monte Carlo algorithm or the Genetic Algorithm. Both approaches can and 

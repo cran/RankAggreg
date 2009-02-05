@@ -270,58 +270,17 @@ We would like to make one last comment on the reasons behind introducing weighte
 
         \noindent The CE algorithm proceeds in the following fashion:
         \begin{enumerate}
-        \item{\textbf{Initialization}: Set t=0. Set the initial parameter matrix $v^0$ of the random
+        \item{\textbf{Initialization}: Set $t=0$. Set the initial parameter matrix $v^0$ of the random
         distribution of $X$ to constant values; i.e., let each $p_{jr}^0=1/n$. Thus, at this
         stage, each of the $n$ unique elements has equal chances of being included in the overall lists of size
         $k$ for which the objective function $\Phi$ will be evaluated. This default behavior can
         be overridden by specifying the initial probability matrix $v1$ in the \emph{RankAggreg} function.}
+		
         \item{\textbf{Sampling}: At each iteration $t$, draw a sample of size $N$ from $P_{v^t}(x)$. Find
         the corresponding top-$k$ lists $\delta_i$'s and the values of the objective
         function $\Phi(\delta_i)$. Sort the $\Phi(\delta_i)$'s in ascending
         order and find a $\rho$-quantile $y^t=\Phi_{([\rho N])}$, where $[a]$, for any
         real number $a$, is the integer part of $a$.}
-
-        The sampling itself is done via an MCMC (Markov Chain Monte
-        Carlo) algorithm which proceeds in its usual iterative manner.
-        \begin{enumerate}
-        \item{\textbf{Step 1: Initialization.} Set $b=0$. Randomly initialize $x^{(0)}$
-        satisfying the constraints discussed above, which is
-        equivalent to randomly picking a candidate list out of the
-        solution space $\mathcal{X}$. Repeat Steps 2 and 3 $(N+burn.in)*thin$
-        times, where
-
-        \hspace{1cm}$N$ is the desired number of realizations from $P_v(x)$,
-
-        \hspace{1cm}$thin$ is a thinning parameter indicating that every $h^{th}$
-        realization after discarding the burn-in will be kept and
-        used as a surrogate for the i.i.d. sample of size
-        $N$. The default value is $thin=20$,
-        
-        \hspace{1cm}$burn.in$ is a burn-in parameter indicating that $burn.in*thin$ initial
-        realizations of the Markov chain are to be discarded
-        (typically initial values of the Markov chain are not valid
-        because the chain is not stable yet and sensitive to
-        the selection of the initial value). The default value is $burn.in=N$, meaning that
-        half of the chain is discarded.}
-        \item{\textbf{Step 2: Proposal.} Let $u$ be an integer
-        uniform variable defined on a discrete space $[1, min(k+1, n-k+1)]$.
-        \begin{itemize}
-        \item{At each step $b$, choose a realization of $u$ from the uniform distribution
-        defined above.}
-        \item{Let $x=x^{(b)}$. Perform $u$ swaps of 0's and 1's in $x$ subject to the constraints defined before. 
-        Propose the generated $x$ as the next realization of the chain.}
-        \end{itemize}}
-        \item{\textbf{Step 3: Acceptance.} The proposed realization from Step 2 is
-        accepted as the next realization of the Markov chain if the
-        acceptance probability $p_A$ defined by
-        \begin{eqnarray*}
-        p_A&=&\frac{P_v(x)}{P_v(x^{(b)})} \\
-         &=&\prod_{r=1}^{k}\prod_{j=1}^n
-         (p_{jr})^{x_{jr}-x_{jr}^{(b)}}
-        \end{eqnarray*}
-        is greater than $y$, where $y$ is an independently generated random variable from $U(0,1)$. Otherwise, $x$
-        is rejected and $x^{(b+1)}=x^{(b)}$.}
-        \end{enumerate}
 
         \item{\textbf{Updating}: Update the parameter vector as follows
         $$
@@ -331,6 +290,7 @@ We would like to make one last comment on the reasons behind introducing weighte
         where $x_{ijr}$ is the value at the $jr^{th}$ position of the $i^{th}$ sample and
         $w$ is a weight parameter introduced to avoid convergence to a local
         maxima (specified by the \emph{weight} argument with the default value of .25).}
+		
         \item{\textbf{Convergence}: The algorithm is stopped if the optimal list does not change in a 
         user-specified number of iterations. The default value is 7 for the CE algorithm 
         and it is specified by the \emph{convIn} argument.}
@@ -659,7 +619,7 @@ upregualated genes shown in Table 1 (the lists appear in Table 4 in \cite{Dec06}
 \end{Schunk}
 
 % latex table generated in R 2.6.2 by xtable 1.5-2 package
-% Wed Oct 01 13:42:40 2008
+% Thu Feb 05 15:34:03 2009
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rlllll}

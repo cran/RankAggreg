@@ -12,7 +12,17 @@ function(v, N, thin, burn.in, comp.list, verbose=TRUE)
 
     samples <- matrix(0,N,k)
     ind <- 1
-    last <- comp.list[sample(1:n,n)]    
+	
+	# start with the best candidate
+	last <- rep(0,n)
+	excl <- n+1
+    for(j in 1:k){
+         last[j] <- rmult(1, (1:n)[-excl], v[,j][-excl])
+         excl <- last[1:j]
+	}
+	last[(k+1):n] <- sample((1:n)[-last[1:k]], n-k)
+
+	#last <- comp.list[sample(1:n,n)]  
     
     vs <- sample(1:k, M, replace=TRUE)
     hs <- sample(1:n, M, replace=TRUE)

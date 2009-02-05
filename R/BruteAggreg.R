@@ -27,18 +27,21 @@ function(x, k, weights=NULL, distance=c("Spearman", "Kendall"), importance=rep(1
        
     comp.list <- unique(sort(as.vector(x)))
     n <- length(comp.list)
+	
+    x <- t(apply(x,1, function(xx) match(xx,comp.list)))
 
     if (k > n)
         stop("k must be smaller or equal to n") 
 
     library(gtools)
-    perms <- permutations(n,k,comp.list)
+    perms <- permutations(n,k,1:n)
     if(distance=="Spearman")
         f.y <- spearman(x, perms, importance, weights)
     else
         f.y <- kendall(x, perms, importance, weights)
     
-    res <- list(top.list=perms[which.min(f.y),],optimal.value=min(f.y), distance=distance,
+	tl <- comp.list[perms[which.min(f.y),]]
+    res <- list(top.list=tl,optimal.value=min(f.y), distance=distance,
 		method="BruteForce", importance=orig.imp, lists=orig.x, weights=weights, 
 		sample=f.y, sample.size=length(f.y), summary=matrix(c(min(f.y),median(f.y)),1,2))
     class(res) <- "raggr"

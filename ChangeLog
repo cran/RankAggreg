@@ -1,0 +1,15 @@
+02-05-2009: Version 0.3-1
+
+	* simulation part of the CE algorithm coded in C.
+	* Spearman distance coded in C.
+
+9-19-2008: Version 0.2-1
+
+	* Genetic Algorithm added.
+	* print and plot functions added for nicely formatted output.
+	* convergence monitoring plot added.
+
+7-15-2007: Version 0.1-1
+
+	* The first version of the package created. 
+	* Cross-Entropy Monte Carlo algorithm provided.

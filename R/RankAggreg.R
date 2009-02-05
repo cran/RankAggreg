@@ -2,7 +2,7 @@
 function(x, k, weights=NULL, method=c("CE", "GA"), 
 		distance=c("Spearman", "Kendall"), seed=NULL, maxIter = 1000, 
 		convIn=ifelse(method=="CE", 7, 30), importance=rep(1,nrow(x)),
-            rho=.1, weight=.25, N=10*k*length(unique(sort(as.vector(x)))), v1=NULL,
+            rho=.1, weight=.25, N=10*k^2, v1=NULL,
             popSize=100, CP=.4, MP=.01, verbose=TRUE, ...)
 {
     if(!is.null(seed))    
@@ -26,11 +26,12 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
 
     compr.list <- unique(sort(as.vector(x)))
     n <- length(compr.list)
-    
-    if(method=="CE"){
-        comp.list <- 1:n
-        x <- t(apply(x,1, function(xx) match(xx,compr.list)))}
+    #compr.list <- rev(compr.list)
+	#cat(compr.list)
 
+    comp.list <- 1:n
+    x <- t(apply(x,1, function(xx) match(xx,compr.list)))
+		
     if(!is.null(weights)){
         weights <- weights[,1:k]
         #standardize weights:
@@ -59,11 +60,16 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
             stop("rho is too small")
 
         t <- 1
+		resN <- matrix(0,N,k)
+		
         repeat
         {
-            cands <- mcmcProc(v, N, argss$thin, argss$burn.in, comp.list, verbose)
+            cands <- matrix(.C("sampling", as.integer(N), as.double(v), as.integer(n),
+						as.integer(k), as.integer(resN), PACKAGE="RankAggreg")[[5]], N)
+
+			#mcmcProc(v, N, argss$thin, argss$burn.in, comp.list, verbose)
             
-		minf <- ifelse(t!=1, min(f.y), 0)
+			minf <- ifelse(t!=1, min(f.y), 0)
 		        
             if(distance=="Spearman")
                 f.y <- spearman(x, cands, importance, weights)
@@ -108,16 +114,16 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
         #generate initial population randomly
         cands <- matrix(0, popSize, k)
         for(i in 1:popSize)
-            cands[i,] <- sample(compr.list, k)
-            
+            cands[i,] <- sample(comp.list, k)
+        
         #calculate obj. fn
             if(distance=="Spearman")
                 f.y <- spearman(x, cands, importance, weights)
             else
                 f.y <- kendall(x, cands, importance, weights)
         
-	  fyRes[1,] <- c(min(f.y), median(f.y))	
-        best.cand <- cands[which.min(f.y),]
+	    fyRes[1,] <- c(min(f.y), median(f.y))	
+        best.cand <- compr.list[cands[which.min(f.y),]]
         bestevery <- min(f.y)    
         
         conv=FALSE
@@ -164,7 +170,7 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
 		
             rows <- sample(1:popSize, mutations, replace=TRUE)
             cols <- sample(1:k, mutations, replace=TRUE)
-		switchWith <- sample(compr.list, mutations, replace=TRUE)
+		switchWith <- sample(comp.list, mutations, replace=TRUE)
 
             for(i in 1:mutations){	
 		    tempI <- cands[rows[i], cols[j]]
@@ -181,7 +187,7 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
 
  		fyRes <- rbind(fyRes,c(min(f.y), median(f.y)))
 
-            y.l <- paste(cands[which.min(f.y),], sep="", collapse=",")
+            y.l <- paste(compr.list[cands[which.min(f.y),]], sep="", collapse=",")
             if(verbose){     
                 cat("\n", "Iteration", t, ": ",  c("Optimal value: ", min(f.y),
                         "\n Optimal List:  ", y.l, "\n"))
@@ -196,7 +202,7 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
                 conv=TRUE
             
             if(min(f.y) < bestevery){
-                best.cand <- cands[which.min(f.y),]
+                best.cand <- compr.list[cands[which.min(f.y),]]
                 bestevery <- min(f.y)
             }
             t <- t+1
