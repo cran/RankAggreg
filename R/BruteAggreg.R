@@ -16,7 +16,7 @@ function(x, k, weights=NULL, distance=c("Spearman", "Kendall"), importance=rep(1
     if(!is.null(weights)){
         weights <- weights[,1:k]
         #standardize weights:
-        weights <- t(apply(weights,1,function(z) (z-min(z))/(max(z)-min(z))))
+        weights <- t(apply(weights,1,function(z){if(max(z)==min(z)) rep(0, length(z)) else (z-min(z))/(max(z)-min(z))}))
 	  for(i in 1:nrow(weights))
         	if(weights[i,k]!=0)
             	weights[i,] <- 1-weights[i,]

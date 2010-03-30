@@ -1,3 +1,7 @@
+03-30-2010: Version 0.4-1
+	* changed the email address to gmail
+	* fixed an issue with a list that had the same weights for all elements
+
 02-05-2009: Version 0.3-1
 
 	* simulation part of the CE algorithm coded in C.

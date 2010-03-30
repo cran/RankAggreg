@@ -35,7 +35,8 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
     if(!is.null(weights)){
         weights <- weights[,1:k]
         #standardize weights:
-        weights <- t(apply(weights,1,function(z) (z-min(z))/(max(z)-min(z))))
+        weights <- t(apply(weights,1,function(z){if(max(z)==min(z)) 
+			rep(0, length(z)) else (z-min(z))/(max(z)-min(z))}))
 	  for(i in 1:nrow(weights)) # make sure 1 is the best score for all lists
         	if(weights[i,k]!=0)
             	weights[i,] <- 1-weights[i,]
@@ -45,7 +46,7 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
 
     if (k > n)
         stop("k must be smaller or equal to n") 
-    
+	  
     fyRes <- matrix(0,1,2)
     colnames(fyRes) <- c("Minimums", "Medians")	
    
@@ -61,6 +62,7 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
 
         t <- 1
 		resN <- matrix(0,N,k)
+		iter <- 0
 		
         repeat
         {
@@ -106,6 +108,9 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
                 break
 
             t <- t + 1
+			
+			try(tclvalue(niter) <- t, silent=TRUE)
+				
             if (t > maxIter){
             	cat("Did not converge after ", maxIter, " iterations. Please increase sample size N\n")
 			break}
@@ -206,12 +211,15 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
                 bestevery <- min(f.y)
             }
             t <- t+1
+			
+			try(tclvalue(niter) <- t, silent=TRUE)
+				
 		if(t > maxIter){
 			cat("Did not converge after ", maxIter, " iterations.\n")
 			break}
         }
     }
-    rownames(fyRes) <- paste("Iter", 1:t)
+    rownames(fyRes) <- paste("Iter", 1:nrow(fyRes))
     res <- list(top.list=best.cand, optimal.value=ifelse(method=="CE", fy$x[1], bestevery), 
     sample.size = ifelse(method=="CE", N, popSize), num.iter=t, method=method, distance=distance,
     importance=orig.imp, lists = orig.x, weights = weights, sample=f.y, summary = fyRes)
