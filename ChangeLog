@@ -1,3 +1,6 @@
+01-23-2011: Version 0.4-2
+	* made clValid a required package
+
 03-30-2010: Version 0.4-1
 	* changed the email address to gmail
 	* fixed an issue with a list that had the same weights for all elements

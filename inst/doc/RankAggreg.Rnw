@@ -35,7 +35,7 @@
   Pihur, Somnath Datta, and Susmita Datta \\ \\
 Department of Bioinformatics and Biostatistics, University of
 Louisville \\
-\url{http://louisville.edu/~v0pihu01/} }
+\url{http://vpihur.com/biostat} }
 
 \title{\emph{RankAggreg}, an R package for weighted rank 
 aggregation}
