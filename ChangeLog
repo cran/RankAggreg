@@ -1,3 +1,7 @@
+06-30-2012: Version 0.4-3
+	* fixed the vignette dependency on xtable
+	* fixed the \usage section for plot.raggr
+	
 01-23-2011: Version 0.4-2
 	* made clValid a required package
 

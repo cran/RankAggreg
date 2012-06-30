@@ -7,7 +7,7 @@
   naive average rank aggregation can be added.
 }
 \usage{
-plot.raggr(x, show.average = TRUE, show.legend = TRUE, colR="red", ...)
+\method{plot}{raggr}(x, show.average = TRUE, show.legend = TRUE, colR="red", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

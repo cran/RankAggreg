@@ -2,7 +2,7 @@
 % likely to be overwritten.
 %
 % \VignetteIndexEntry{RankAggreg Overview}
-% \VignetteDepends{clValid}
+% \VignetteDepends{clValid, xtable}
 % \VignetteKeywords{rank aggregation, Cross-Entropy Monte Carlo algorithm, Genetic algorithm, meta analysis}
 % \VignettePackage{RankAggreg}
 
