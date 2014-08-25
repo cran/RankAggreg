@@ -2,7 +2,7 @@ useDynLib(RankAggreg)
 export(RankAggreg, BruteAggreg, plot.raggr)
 S3method(print,raggr)
 S3method(plot,raggr)
-
+import(gtools)
 
 
             

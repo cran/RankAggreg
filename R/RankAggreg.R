@@ -108,9 +108,7 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
                 break
 
             t <- t + 1
-			
-			try(tclvalue(niter) <- t, silent=TRUE)
-				
+							
             if (t > maxIter){
             	cat("Did not converge after ", maxIter, " iterations. Please increase sample size N\n")
 			break}
@@ -211,9 +209,7 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
                 bestevery <- min(f.y)
             }
             t <- t+1
-			
-			try(tclvalue(niter) <- t, silent=TRUE)
-				
+							
 		if(t > maxIter){
 			cat("Did not converge after ", maxIter, " iterations.\n")
 			break}

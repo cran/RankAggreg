@@ -8,7 +8,8 @@
  function
 }
 \usage{
-BruteAggreg(x, k, weights = NULL, distance = c("Spearman", "Kendall"), importance=rep(1,nrow(x)))
+BruteAggreg(x, k, weights = NULL, distance = c("Spearman", "Kendall"),
+            importance=rep(1,nrow(x)))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

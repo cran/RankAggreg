@@ -1,5 +1,6 @@
 `BruteAggreg` <-
-function(x, k, weights=NULL, distance=c("Spearman", "Kendall"), importance=rep(1,nrow(x))){
+function(x, k, weights=NULL, distance=c("Spearman", "Kendall"),
+         importance=rep(1,nrow(x))){
     distance <- match.arg(distance, c("Spearman", "Kendall"))
     x <- x[,1:k]
     orig.x <- x
@@ -16,7 +17,8 @@ function(x, k, weights=NULL, distance=c("Spearman", "Kendall"), importance=rep(1
     if(!is.null(weights)){
         weights <- weights[,1:k]
         #standardize weights:
-        weights <- t(apply(weights,1,function(z){if(max(z)==min(z)) rep(0, length(z)) else (z-min(z))/(max(z)-min(z))}))
+        weights <- t(apply(weights,1,function(z){if(max(z)==min(z)) rep(0, length(z))
+        	else (z-min(z))/(max(z)-min(z))}))
 	  for(i in 1:nrow(weights))
         	if(weights[i,k]!=0)
             	weights[i,] <- 1-weights[i,]
@@ -33,7 +35,6 @@ function(x, k, weights=NULL, distance=c("Spearman", "Kendall"), importance=rep(1
     if (k > n)
         stop("k must be smaller or equal to n") 
 
-    library(gtools)
     perms <- permutations(n,k,1:n)
     if(distance=="Spearman")
         f.y <- spearman(x, perms, importance, weights)
