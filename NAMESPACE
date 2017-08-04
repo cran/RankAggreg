@@ -1,8 +1,10 @@
-useDynLib(RankAggreg)
+useDynLib(RankAggreg, .registration = TRUE)
 export(RankAggreg, BruteAggreg, plot.raggr)
 S3method(print,raggr)
 S3method(plot,raggr)
 import(gtools)
+importFrom("graphics", "axis", "hist", "layout", "legend", "lines", "plot")
+importFrom("stats", "median", "runif")
 
 
             

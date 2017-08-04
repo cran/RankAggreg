@@ -374,16 +374,18 @@ We would like to make one last comment on the reasons behind introducing weighte
     Clustering validation is implemented in the \emph{clValid} package \cite{Bro07}. After loading the package, we bring in a mouse microarray dataset
     available and select the first 100 genes from it.
     Assuming that those 100 genes form 5 natural clusters (this is a big assumption but it is not essential for the rank aggregation demonstration),
-    we evaluate 10 clustering algorithms with 6 validation measures. Available clustering algorithms are: SOM (SM), SOTA (ST), FANNY (FN),
+    we evaluate 10 clustering algorithms with 6 validation measures. Available clustering algorithms are: SOTA (ST), FANNY (FN),
     K-Means(KM), PAM(PM), Hierarchical(HR), Agnes(AG), CLARA(CL), Diana(DI), and Model-based(MO). 
     Further details can be obtained from the clValid package documentation.
     
 <<echo=FALSE>>=
 options(width=55)
 library(xtable)
+options(warn = -1)
 @
     
 <<results=hide>>=
+    options(warn = -1)
     library(clValid)
     data(mouse)
     express <- mouse[1:100,c("M1","M2","M3","NC1","NC2","NC3")]
@@ -391,11 +393,11 @@ library(xtable)
     set.seed(100)
     result <- clValid(express, 5, 
         clMethods=c("hierarchical","fanny","model", "kmeans","sota","pam","clara",
-        "agnes", "diana", "som"), validation=c("internal","stability"))
+        "agnes", "diana"), validation=c("internal","stability"))
 @
     
-    The \emph{result} object contains a $7\times10$ matrix of scores which measure the performance of the algorithms. 
-    For each validation measure, 10 clustering algorithms can now be ranked based on these scores which 
+    The \emph{result} object contains a $7\times9$ matrix of scores which measure the performance of the algorithms. 
+    For each validation measure, 9 clustering algorithms can now be ranked based on these scores which 
     are sorted either in ascending or descending order depending on whether larger or smaller scores
     correspond to better performance under the measure. Here, the Dunn index and the Silhouette Width measure give higher scores 
     with better performance and for the other measures the smaller scores are desirable. 
@@ -424,29 +426,26 @@ library(xtable)
     }
 
     res <- getRanks_Weights(result)
-    shortNames <- sort(c("SM","ST", "FN", "KM", "PM", "HR", "AG", "CL", "DI", "MO"))
+    shortNames <- sort(c("ST", "FN", "KM", "PM", "HR", "AG", "CL", "DI", "MO"))
     longNames <- sort(unique(as.vector(res$ranks)))
     for(i in 1:length(shortNames))
         res$ranks[res$ranks==longNames[i]] <- shortNames[i]
     
 @
 
-    This is how the 7 ordered lists of 10 algorithms look like.
+    This is how the 7 ordered lists of 9 algorithms look like.
     
 <<echo=FALSE>>=
     print(res$ranks, quote=FALSE)
 @
 The underlying validation measures' scores are given below.
 <<echo=FALSE>>=
-    round(res$weights, 3)
+     print(res$ranks, quote=FALSE)
 @
 
-We can see that both SOM and Hierarchical clustering are performing quite well and each is ranked first by
-three different validation measures. If we had to pick the overall winner, it would probably be SOM as it 
-performs better overall. For this particular aggregation problem it is feasible to determine the best 
-performer without resorting to advanced computational techniques, but it is rather difficult to obtain the overall 
-ordered list in this case. Since the number of possible solutions is not that large in this case 
-$(k!=10! = 3,628,800)$, it is feasible to use the brute force approach to find the optimal solution.
+We can see that K-Means and Hierarchical clustering are performing quite well.
+Since the number of possible solutions is not that large in this case 
+$(k!=9! = 362,880)$, it is feasible to use the brute force approach to find the optimal solution.
 This can be done using the \emph{BruteAggreg} function provided in the package. Please note 
 that even for this relatively small problem it takes hours to perform the necessary computations. The approach
 is limited to toy examples only and should not be attempted if $k$ is larger than 10.
@@ -457,24 +456,22 @@ load("aggr_res.Rdata")
 @
 
 <<eval=FALSE>>=
-BruteAggreg(res$ranks, 10, res$weights, "Spearman")
+BruteAggreg(res$ranks, 9, res$weights, "Spearman")
 @
 The best overall list as determine by trying all possible solutions with the weighted Spearman footrule distance is 
-SM HR KM FN AG PM CL DI ST MO with the minimum objective function score of
-5.552256. As expected, SOM and Hierarchical clustering are the top two performers, followed by the K-Means algorithm. 
+KM HR AG FN PM CL DI ST MO with the minimum objective function score of
+6.378781. As expected, Hierarchical clustering and the K-Means algorithm are the top two performers.
 We will now see if the CE algorithm can quickly discover the solution without resorting to an exhaustive search.
 
 
 <<eval=FALSE>>=
-(CEWS <- RankAggreg(res$ranks, 10, res$weights, seed=123))
+(CEWS <- RankAggreg(res$ranks, 9, res$weights, seed=123))
 @
 
 <<echo=FALSE>>=
 CEWS
 @
-We get exactly the same solution in only 13 iterations and in about 40 seconds by examining mere 13000 potential candidates.
-We ran the CE algorithm 20 times using the default values with 20 different seeds. Only 1 out of 20 times it failed to discover the 
-correct solution, switching K-Means and SOM algorithms. 
+We get exactly the same solution in only 22 iterations and in about 40 seconds by examining mere 13000 potential candidates.
 
 To get a visual representation of the results, a convenient \emph{plot} function is provided. It takes the 
 object returned by the \emph{RankAggreg} function as its first argument and outputs three side-by-side plots with useful information
@@ -502,17 +499,14 @@ of the \emph{RankAggreg} function is set to TRUE (it is by default), R console w
 to keep the user updated. In addition, a plot similar to Figure 1 is shown and updated at each iteration to monitor convergence.
 
 <<eval=FALSE>>=
-(CEWK <- RankAggreg(res$ranks, 10, res$weights, "CE", "Kendall", seed=123, verbose=FALSE))
+(CEWK <- RankAggreg(res$ranks, 9, res$weights, "CE", "Kendall", seed=123, verbose=FALSE))
 @
 
 <<echo=FALSE>>=
 CEWK
 @
 
-Using the CE algorithm with the Kendall distance results in a different solution in which SOM is put in the second
-position with K-Means occupying the first place. Maybe somewhat surprisingly, the Hierarchical clustering algorithm is ranked 
-fifth despite the fact that it was ranked number 1 in 3 out of 7 lists. The rational explanation behind this decision is given by its
-poor performance according to the other four measures which rank it towards the end.
+This time K-means is still ahead, while the Hierarchical clusters got pushed down to number 4.
 
 The Genetic Algorithm can also be used with both the weighted Spearman and Kendall distances. Unfortunately, it seems to lack
 the monotonicity property that the CE algorithm exhibits to some extent. This can be seen in the first plot of Figure 2.
@@ -520,14 +514,14 @@ Due to that fact, the convergence criteria needs to
 be stricter to avoid sporadic local solutions. The default value for the \emph{convIn} arguments for the GA is 30.
 
 <<eval=FALSE>>=
-(GAWS <- RankAggreg(res$ranks, 10, res$weights, "GA", "Spearman",seed=123, verbose=FALSE))
+(GAWS <- RankAggreg(res$ranks, 9, res$weights, "GA", "Spearman",seed=123, verbose=FALSE))
 @
 <<echo=FALSE>>=
 GAWS
 @
 
 <<eval=FALSE>>=
-(GAWK <- RankAggreg(res$ranks, 10, res$weights, "GA", "Kendall",seed=123, verbose=FALSE))
+(GAWK <- RankAggreg(res$ranks, 9, res$weights, "GA", "Kendall",seed=123, verbose=FALSE))
 @
 <<echo=FALSE>>=
 GAWK
