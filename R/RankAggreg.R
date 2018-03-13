@@ -3,7 +3,7 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
 		distance=c("Spearman", "Kendall"), seed=NULL, maxIter = 1000, 
 		convIn=ifelse(method=="CE", 7, 30), importance=rep(1,nrow(x)),
             rho=.1, weight=.25, N=10*k^2, v1=NULL,
-            popSize=100, CP=.4, MP=.01, verbose=TRUE, ...)
+            popSize=100, CP=.4, MP=.01, verbose=TRUE, standardizeWeights = TRUE, ...)
 {
     if(!is.null(seed))    
     	  set.seed(seed)	   
@@ -35,11 +35,13 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
     if(!is.null(weights)){
         weights <- weights[,1:k]
         #standardize weights:
-        weights <- t(apply(weights,1,function(z){if(max(z)==min(z)) 
-			rep(0, length(z)) else (z-min(z))/(max(z)-min(z))}))
-	  for(i in 1:nrow(weights)) # make sure 1 is the best score for all lists
-        	if(weights[i,k]!=0)
-            	weights[i,] <- 1-weights[i,]
+        if (standardizeWeights) {
+	    		weights <- t(apply(weights,1,function(z){if(max(z)==min(z)) 
+				rep(0, length(z)) else (z-min(z))/(max(z)-min(z))}))
+	        for(i in 1:nrow(weights)) # make sure 1 is the best score for all lists
+	      	   if(weights[i,k]!=0)
+	           	  weights[i,] <- 1-weights[i,]
+	    }        	
         if(dim(x)[1] != dim(weights)[1] || dim(x)[2] != dim(weights)[2])
         stop("Dimensions of x and weight matrices have to be the same")
     }

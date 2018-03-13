@@ -1,6 +1,6 @@
 `BruteAggreg` <-
 function(x, k, weights=NULL, distance=c("Spearman", "Kendall"),
-         importance=rep(1,nrow(x))){
+         importance=rep(1,nrow(x)), standardizeWeights = TRUE){
     distance <- match.arg(distance, c("Spearman", "Kendall"))
     x <- x[,1:k]
     orig.x <- x
@@ -17,11 +17,13 @@ function(x, k, weights=NULL, distance=c("Spearman", "Kendall"),
     if(!is.null(weights)){
         weights <- weights[,1:k]
         #standardize weights:
-        weights <- t(apply(weights,1,function(z){if(max(z)==min(z)) rep(0, length(z))
-        	else (z-min(z))/(max(z)-min(z))}))
-	  for(i in 1:nrow(weights))
-        	if(weights[i,k]!=0)
-            	weights[i,] <- 1-weights[i,]
+        if (standardizeWeights) {
+	    		weights <- t(apply(weights,1,function(z){if(max(z)==min(z)) 
+				rep(0, length(z)) else (z-min(z))/(max(z)-min(z))}))
+	        for(i in 1:nrow(weights)) # make sure 1 is the best score for all lists
+	      	   if(weights[i,k]!=0)
+	           	  weights[i,] <- 1-weights[i,]
+	    }        	
         if(dim(x)[1] != dim(weights)[1] || dim(x)[2] != dim(weights)[2])
         	stop("Dimensions of x and weights matrices have to be the same")
     }

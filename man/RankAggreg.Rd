@@ -11,7 +11,7 @@ RankAggreg(x, k, weights=NULL, method=c("CE", "GA"),
 distance=c("Spearman", "Kendall"), seed=NULL, maxIter = 1000,
 convIn=ifelse(method=="CE", 7, 30), importance=rep(1,nrow(x)),
 rho=.1, weight=.25, N=10*k^2, v1=NULL,
-popSize=100, CP=.4, MP=.01, verbose=TRUE, ...)
+popSize=100, CP=.4, MP=.01, verbose=TRUE, standardizeWeights = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,6 +39,7 @@ popSize=100, CP=.4, MP=.01, verbose=TRUE, ...)
   \item{MP}{Mutation probability for the GA. This value should be small and the number of mutations in the population of size popSize
 	and the number of features k is computed as popSize*k*MP.}
   \item{verbose}{boolean, if console output is to be displayed at each iteration}
+  \item{standardizeWeights}{boolean, default is true which standardizes weights to [0,1]}
   \item{\dots}{additional arguments can be passed to the internal procedures:
 
 	-- p - penalty for the Kendall's tau distance; default: 0}

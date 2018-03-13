@@ -9,7 +9,7 @@
 }
 \usage{
 BruteAggreg(x, k, weights = NULL, distance = c("Spearman", "Kendall"),
-            importance=rep(1,nrow(x)))
+            importance=rep(1,nrow(x)), standardizeWeights = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,6 +18,7 @@ BruteAggreg(x, k, weights = NULL, distance = c("Spearman", "Kendall"),
   \item{weights}{scores (weights) to be used in the aggregation process}
   \item{distance}{distance which "measures" the similarity between the ordered lists}
   \item{importance}{a vector of weights indicating the importance of each ordered list in x}
+  \item{standardizeWeights}{boolean, default is true which standardizes weights to [0,1]}  
 }
 \details{
   The function performs rank aggregation using the old-fashion brute force approach. This approach

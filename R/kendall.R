@@ -29,7 +29,7 @@ function(x, y, importance, weights=NULL)
         for (i in 1:(n-1))
             for (j in (i+1):n)
                 if((x[i] > x[j] & y[i] < y[j]) | (x[i] < x[j] & y[i] > y[j]))
-                    K=K+abs(weight[ifelse(x[i]>k,k,x[i])]-weight[ifelse(y[j]>k,k,y[j])])
+                    K=K+abs(weight[ifelse(x[i]>k,k,x[i])]-weight[ifelse(x[j]>k,k,x[j])])
         K
     }
 
