@@ -1,8 +1,8 @@
-5faca9108aefc2cd6ce55179cca2f44e *ChangeLog
-5223252585f48bb59de586885c7918dc *DESCRIPTION
+4fcdca20438a0a90d7862002bf3e820c *ChangeLog
+b043d25f8a2833ad78c853d5e21c8ddf *DESCRIPTION
 a6b88b480379015d7bf71a03186347bd *NAMESPACE
 c93673ae9293edc5cb1bd5869354a9ef *R/BruteAggreg.R
-d88676c4b8a888c8e294b6f7f0e3caca *R/RankAggreg.R
+f1dc9a40f0f1f5e890256b6e86d32434 *R/RankAggreg.R
 0ccdbabd3705c83606bdf0fb3c617f9a *R/kendall.R
 b39e2e0c59dfe90560f68ce6fa4e2f1a *R/mcmcProc.R
 6cb3ef43585f9038b63b6fd9cd9a2c88 *R/plot.R
@@ -15,7 +15,7 @@ ccea0d6e7b7f65f64fc03a475f79f6ed *build/vignette.rds
 8019d2d1ef68b6204c5619b9376ac6f2 *data/geneLists.rda
 5a7e2d2c58cac091d410d0797e3acbd2 *inst/doc/RankAggreg.R
 53458083d863f87bf480bf4b58d60e99 *inst/doc/RankAggreg.Rnw
-86c65e0b7432ecbacc6f9ded7cdcb815 *inst/doc/RankAggreg.pdf
+d6b6c5b779ae29b8fe86432eece67818 *inst/doc/RankAggreg.pdf
 d60bfbf924e0e746a08254126e648fab *man/BruteAggreg.Rd
 5f1047e7f7981c66e6f7faa2494dfb81 *man/RankAggreg.Rd
 ad62935d5502250e74bd9a50e5c3df49 *man/geneLists.Rd

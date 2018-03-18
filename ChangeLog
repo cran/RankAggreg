@@ -1,3 +1,7 @@
+03-18-2018: Version 0.6-4
+	* fixed bugs in the computation of Kendall weighted distance
+	* fixed bugs in the genetic algorithm sampling
+
 06-30-2012: Version 0.4-3
 	* fixed the vignette dependency on xtable
 	* fixed the \usage section for plot.raggr

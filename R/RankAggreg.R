@@ -152,7 +152,11 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
             samp <- sample(1:popSize, pairstocross*2)
             pointsofcross <- sample(2:k, pairstocross, replace=TRUE)
             for(i in 1:pairstocross){
-		    swap <- ifelse(pointsofcross[i] < k/2, 1:pointsofcross[i], pointsofcross[i]:k)
+		    if(pointsofcross[i] < k/2) {
+		    	swap <- 1:pointsofcross[i]
+		    } else {
+		    	swap <- pointsofcross[i]:k
+		    }	
                 for(j in swap){
                 # this loop performs partially matched crossover (PMX) described in Section 10.5 of 
                 # Data Mining: Concepts, Models, Methods, and Algorithms by Mehmed Kantardzic (2003)
@@ -178,10 +182,10 @@ function(x, k, weights=NULL, method=c("CE", "GA"),
 		switchWith <- sample(comp.list, mutations, replace=TRUE)
 
             for(i in 1:mutations){	
-		    tempI <- cands[rows[i], cols[j]]
+		    tempI <- cands[rows[i], cols[i]]
 		    if(switchWith[i] %in% cands[rows[i],])
 		        cands[rows[i],which(switchWith[i]==cands[rows[i],])] <- tempI	
-		    cands[rows[i], cols[j]] <- switchWith[i]
+		    cands[rows[i], cols[i]] <- switchWith[i]
 		}         
             
             #calculate obj. fn
