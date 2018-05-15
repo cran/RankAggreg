@@ -1,5 +1,5 @@
 4fcdca20438a0a90d7862002bf3e820c *ChangeLog
-b043d25f8a2833ad78c853d5e21c8ddf *DESCRIPTION
+ff7970e3c0a22855ea1ccbd91d4424e1 *DESCRIPTION
 a6b88b480379015d7bf71a03186347bd *NAMESPACE
 c93673ae9293edc5cb1bd5869354a9ef *R/BruteAggreg.R
 f1dc9a40f0f1f5e890256b6e86d32434 *R/RankAggreg.R
@@ -15,7 +15,7 @@ ccea0d6e7b7f65f64fc03a475f79f6ed *build/vignette.rds
 8019d2d1ef68b6204c5619b9376ac6f2 *data/geneLists.rda
 5a7e2d2c58cac091d410d0797e3acbd2 *inst/doc/RankAggreg.R
 53458083d863f87bf480bf4b58d60e99 *inst/doc/RankAggreg.Rnw
-d6b6c5b779ae29b8fe86432eece67818 *inst/doc/RankAggreg.pdf
+8f5e5c6c354bbf68e24eaa4cd9b485d3 *inst/doc/RankAggreg.pdf
 d60bfbf924e0e746a08254126e648fab *man/BruteAggreg.Rd
 5f1047e7f7981c66e6f7faa2494dfb81 *man/RankAggreg.Rd
 ad62935d5502250e74bd9a50e5c3df49 *man/geneLists.Rd
@@ -24,4 +24,4 @@ ad62935d5502250e74bd9a50e5c3df49 *man/geneLists.Rd
 1ae55fb4262fe7388910f79f7fe11bb2 *src/registerDynamicSymbol.c
 53458083d863f87bf480bf4b58d60e99 *vignettes/RankAggreg.Rnw
 70ce0d360d233cfbf930bf6e85869ef5 *vignettes/aggr_res.Rdata
-151e11b74db0e8586683f8b3eb55496e *vignettes/refs.bib
+11ce46dd6a431147c83faf0a667403b4 *vignettes/refs.bib

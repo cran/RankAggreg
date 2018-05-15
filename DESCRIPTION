@@ -1,8 +1,8 @@
 Package: RankAggreg
 Type: Package
 Title: Weighted Rank Aggregation
-Version: 0.6.4
-Date: 2018-03-18
+Version: 0.6.5
+Date: 2018-05-14
 Author: Vasyl Pihur <vpihur@gmail.com>, Somnath Datta
         <somnath.datta@louisville.edu>, Susmita Datta
         <susmita.datta@louisville.edu>
@@ -16,6 +16,6 @@ Description: Performs aggregation of ordered lists based
         brute force algorithm (for small problems).
 License: LGPL
 NeedsCompilation: yes
-Packaged: 2018-03-18 16:35:34 UTC; vpihur
+Packaged: 2018-05-15 02:30:50 UTC; vpihur
 Repository: CRAN
-Date/Publication: 2018-03-18 16:58:34 UTC
+Date/Publication: 2018-05-15 03:57:53 UTC
