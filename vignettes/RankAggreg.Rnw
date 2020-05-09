@@ -387,6 +387,8 @@ options(warn = -1)
 <<results=hide>>=
     options(warn = -1)
     library(clValid)
+    library(mclust)
+    library(kohonen)
     data(mouse)
     express <- mouse[1:100,c("M1","M2","M3","NC1","NC2","NC3")]
     rownames(express) <- mouse$ID[1:100]

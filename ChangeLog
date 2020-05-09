@@ -1,3 +1,6 @@
+5-09-2020: Version 0.6-5
+	* fixed vignette imports
+
 03-18-2018: Version 0.6-4
 	* fixed bugs in the computation of Kendall weighted distance
 	* fixed bugs in the genetic algorithm sampling

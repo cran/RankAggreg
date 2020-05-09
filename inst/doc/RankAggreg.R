@@ -22,10 +22,12 @@ options(warn = -1)
 
 
 ###################################################
-### code chunk number 4: RankAggreg.Rnw:387-396
+### code chunk number 4: RankAggreg.Rnw:387-398
 ###################################################
     options(warn = -1)
     library(clValid)
+    library(mclust)
+    library(kohonen)
     data(mouse)
     express <- mouse[1:100,c("M1","M2","M3","NC1","NC2","NC3")]
     rownames(express) <- mouse$ID[1:100]
@@ -36,7 +38,7 @@ options(warn = -1)
 
 
 ###################################################
-### code chunk number 5: RankAggreg.Rnw:405-433
+### code chunk number 5: RankAggreg.Rnw:407-435
 ###################################################
     getRanks_Weights <- function(clObj){
     temp <- clObj@measures[,1,]
@@ -69,37 +71,37 @@ options(warn = -1)
 
 
 ###################################################
-### code chunk number 6: RankAggreg.Rnw:438-439
+### code chunk number 6: RankAggreg.Rnw:440-441
 ###################################################
     print(res$ranks, quote=FALSE)
 
 
 ###################################################
-### code chunk number 7: RankAggreg.Rnw:442-443
+### code chunk number 7: RankAggreg.Rnw:444-445
 ###################################################
      print(res$ranks, quote=FALSE)
 
 
 ###################################################
-### code chunk number 8: RankAggreg.Rnw:454-455
+### code chunk number 8: RankAggreg.Rnw:456-457
 ###################################################
 load("aggr_res.Rdata")
 
 
 ###################################################
-### code chunk number 9: RankAggreg.Rnw:458-459 (eval = FALSE)
+### code chunk number 9: RankAggreg.Rnw:460-461 (eval = FALSE)
 ###################################################
 ## BruteAggreg(res$ranks, 9, res$weights, "Spearman")
 
 
 ###################################################
-### code chunk number 10: RankAggreg.Rnw:467-468 (eval = FALSE)
+### code chunk number 10: RankAggreg.Rnw:469-470 (eval = FALSE)
 ###################################################
 ## (CEWS <- RankAggreg(res$ranks, 9, res$weights, seed=123))
 
 
 ###################################################
-### code chunk number 11: RankAggreg.Rnw:471-472
+### code chunk number 11: RankAggreg.Rnw:473-474
 ###################################################
 CEWS
 
@@ -117,37 +119,37 @@ plot(CEWS)
 
 
 ###################################################
-### code chunk number 14: RankAggreg.Rnw:501-502 (eval = FALSE)
+### code chunk number 14: RankAggreg.Rnw:503-504 (eval = FALSE)
 ###################################################
 ## (CEWK <- RankAggreg(res$ranks, 9, res$weights, "CE", "Kendall", seed=123, verbose=FALSE))
 
 
 ###################################################
-### code chunk number 15: RankAggreg.Rnw:505-506
+### code chunk number 15: RankAggreg.Rnw:507-508
 ###################################################
 CEWK
 
 
 ###################################################
-### code chunk number 16: RankAggreg.Rnw:516-517 (eval = FALSE)
+### code chunk number 16: RankAggreg.Rnw:518-519 (eval = FALSE)
 ###################################################
 ## (GAWS <- RankAggreg(res$ranks, 9, res$weights, "GA", "Spearman",seed=123, verbose=FALSE))
 
 
 ###################################################
-### code chunk number 17: RankAggreg.Rnw:519-520
+### code chunk number 17: RankAggreg.Rnw:521-522
 ###################################################
 GAWS
 
 
 ###################################################
-### code chunk number 18: RankAggreg.Rnw:523-524 (eval = FALSE)
+### code chunk number 18: RankAggreg.Rnw:525-526 (eval = FALSE)
 ###################################################
 ## (GAWK <- RankAggreg(res$ranks, 9, res$weights, "GA", "Kendall",seed=123, verbose=FALSE))
 
 
 ###################################################
-### code chunk number 19: RankAggreg.Rnw:526-527
+### code chunk number 19: RankAggreg.Rnw:528-529
 ###################################################
 GAWK
 
@@ -165,49 +167,49 @@ plot(GAWS)
 
 
 ###################################################
-### code chunk number 22: RankAggreg.Rnw:570-571
+### code chunk number 22: RankAggreg.Rnw:572-573
 ###################################################
 data(geneLists)
 
 
 ###################################################
-### code chunk number 23: RankAggreg.Rnw:574-575
+### code chunk number 23: RankAggreg.Rnw:576-577
 ###################################################
 xtable(t(geneLists), caption="Top-25 upregulated genes from 5 prostate microarray experiments.")
 
 
 ###################################################
-### code chunk number 24: RankAggreg.Rnw:585-586 (eval = FALSE)
+### code chunk number 24: RankAggreg.Rnw:587-588 (eval = FALSE)
 ###################################################
 ## top25CE <- RankAggreg(geneLists, 25, seed=100, rho=.01)
 
 
 ###################################################
-### code chunk number 25: RankAggreg.Rnw:589-590
+### code chunk number 25: RankAggreg.Rnw:591-592
 ###################################################
 top25CE
 
 
 ###################################################
-### code chunk number 26: RankAggreg.Rnw:602-603 (eval = FALSE)
+### code chunk number 26: RankAggreg.Rnw:604-605 (eval = FALSE)
 ###################################################
 ## top25CEw <- RankAggreg(geneLists, 25, seed=100, importance=c(1,2,1,1,2), rho=.01)
 
 
 ###################################################
-### code chunk number 27: RankAggreg.Rnw:606-607
+### code chunk number 27: RankAggreg.Rnw:608-609
 ###################################################
 top25CEw
 
 
 ###################################################
-### code chunk number 28: RankAggreg.Rnw:623-624 (eval = FALSE)
+### code chunk number 28: RankAggreg.Rnw:625-626 (eval = FALSE)
 ###################################################
 ## top25GA <- RankAggreg(geneLists, 25, seed=100, method="GA", maxIter=3000, convIn=50)
 
 
 ###################################################
-### code chunk number 29: RankAggreg.Rnw:627-628
+### code chunk number 29: RankAggreg.Rnw:629-630
 ###################################################
 top25GA
 
